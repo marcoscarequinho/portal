@@ -16,20 +16,37 @@ const { assinarToken, requireAuth, requireAdmin, podePublicarEm } = require("./a
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static(__dirname));
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 // ---------------- Upload de imagens ----------------
+// Em produção (Vercel) o filesystem é somente leitura fora de /tmp e não persiste
+// entre execuções, então as imagens vão para o Vercel Blob. Em dev local, sem
+// BLOB_READ_WRITE_TOKEN configurado, caem no disco em ./uploads como antes.
 const UPLOADS_DIR = path.join(__dirname, "uploads");
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+const USANDO_BLOB = !!process.env.BLOB_READ_WRITE_TOKEN;
+if (!USANDO_BLOB) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 // ---------------- Áudio das matérias (texto-para-fala local via Windows, sem API paga) ----------------
 const AUDIO_DIR = path.join(UPLOADS_DIR, "audio");
-fs.mkdirSync(AUDIO_DIR, { recursive: true });
+if (process.platform === "win32") fs.mkdirSync(AUDIO_DIR, { recursive: true });
 const TTS_SCRIPT = path.join(__dirname, "scripts", "tts.ps1");
+
+app.use(cors());
+app.use(express.json());
+
+// Somente os diretórios de conteúdo público e as páginas HTML nomeadas são
+// servidos como estático — evita expor server.js, migrate.js, seed.js etc.
+app.use("/assets", express.static(path.join(__dirname, "assets")));
+app.use("/uploads", express.static(UPLOADS_DIR));
+
+const PAGINAS_PUBLICAS = new Set([
+  "index.html", "busca.html", "noticia.html", "editor.html", "login.html", "admin.html",
+]);
+app.use((req, res, next) => {
+  const nomeArquivo = req.path.replace(/^\//, "");
+  if (PAGINAS_PUBLICAS.has(nomeArquivo)) return res.sendFile(path.join(__dirname, nomeArquivo));
+  next();
+});
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function nomeArquivoAudio(slug) {
   return `${slug.replace(/[^a-zA-Z0-9_-]/g, "_")}.wav`;
@@ -78,12 +95,9 @@ const MIME_PARA_EXT = {
 };
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: UPLOADS_DIR,
-    // O nome do arquivo é gerado aqui (nunca a partir do nome enviado pelo cliente)
-    // para impedir path traversal e colisões.
-    filename: (req, file, cb) => cb(null, crypto.randomUUID() + MIME_PARA_EXT[file.mimetype]),
-  }),
+  // Em memória: o buffer é gravado no Vercel Blob (produção) ou em disco (dev local)
+  // dentro do handler, dependendo de BLOB_READ_WRITE_TOKEN estar configurado.
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!MIME_PARA_EXT[file.mimetype]) return cb(new Error("Formato de imagem não suportado."));
@@ -92,10 +106,28 @@ const upload = multer({
 });
 
 app.post("/api/upload", requireAuth, (req, res) => {
-  upload.single("imagem")(req, res, (err) => {
+  upload.single("imagem")(req, res, async (err) => {
     if (err) return res.status(400).json({ erro: err.message || "Falha no upload." });
     if (!req.file) return res.status(400).json({ erro: "Nenhum arquivo enviado." });
-    res.status(201).json({ url: `/uploads/${req.file.filename}` });
+
+    // Nome gerado aqui (nunca a partir do nome enviado pelo cliente) para impedir
+    // path traversal e colisões.
+    const nomeArquivo = crypto.randomUUID() + MIME_PARA_EXT[req.file.mimetype];
+    try {
+      if (USANDO_BLOB) {
+        const { put } = require("@vercel/blob");
+        const blob = await put(nomeArquivo, req.file.buffer, {
+          access: "public",
+          contentType: req.file.mimetype,
+        });
+        return res.status(201).json({ url: blob.url });
+      }
+      fs.writeFileSync(path.join(UPLOADS_DIR, nomeArquivo), req.file.buffer);
+      res.status(201).json({ url: `/uploads/${nomeArquivo}` });
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      res.status(500).json({ erro: "Falha ao salvar imagem." });
+    }
   });
 });
 
@@ -215,6 +247,9 @@ app.get("/api/noticias/:slug", async (req, res) => {
 // Gera (ou reaproveita) o áudio da matéria — funciona tanto para matérias antigas
 // quanto para as recém-publicadas, já que a geração acontece sob demanda.
 app.get("/api/noticias/:slug/audio", async (req, res) => {
+  if (process.platform !== "win32") {
+    return res.status(503).json({ erro: "Áudio de matérias não está disponível neste ambiente." });
+  }
   try {
     const { rows } = await pool.query(
       `SELECT slug, titulo, linha, resumo30s, corpo FROM noticias WHERE slug = $1`,
@@ -416,6 +451,12 @@ app.get(["/", "/busca", "/noticia", "/editor", "/login", "/admin"], (req, res) =
   res.sendFile(path.join(__dirname, map[req.path]));
 });
 
-app.listen(PORT, () => {
-  console.log(`Cais rodando em http://localhost:${PORT}`);
-});
+// Na Vercel o app é importado por api/index.js e invocado por requisição —
+// só sobe um listener HTTP normal quando roda localmente (node server.js).
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Cais rodando em http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

@@ -5,6 +5,9 @@
   "description": "Cais — portal de notícias regional (Rio de Janeiro e Baixada Fluminense)",
   "main": "server.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "start": "node server.js",
     "migrate": "node migrate.js",
@@ -12,6 +15,7 @@
     "seed:admin": "node seed-admin.js"
   },
   "dependencies": {
+    "@vercel/blob": "^2.5.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
