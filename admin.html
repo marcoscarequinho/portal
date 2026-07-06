@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestão de editores — Cais</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-bar container">
+      <a href="index.html" class="logo">Ca<span>i</span>s</a>
+      <span style="font-weight:700;color:var(--text-muted);font-size:0.9rem;">Gestão de editores</span>
+      <div class="header-actions">
+        <a href="editor.html" class="icon-btn" title="Ir para o painel de edição">✍️</a>
+        <button type="button" class="icon-btn dark-toggle" title="Alternar modo escuro">🌙</button>
+        <span id="user-info" style="font-size:0.85rem;color:var(--text-muted);"></span>
+        <button type="button" class="btn btn-secondary" id="btn-logout" style="padding:6px 12px;">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding:24px 0 64px;">
+    <div class="editor-card">
+      <h2>Novo editor</h2>
+      <form id="form-novo-editor">
+        <div class="field-row">
+          <div class="field">
+            <label for="n-nome">Nome</label>
+            <input type="text" id="n-nome" required />
+          </div>
+          <div class="field">
+            <label for="n-email">E-mail</label>
+            <input type="email" id="n-email" required />
+          </div>
+          <div class="field">
+            <label for="n-senha">Senha provisória</label>
+            <input type="text" id="n-senha" required minlength="6" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field field-check" style="max-width:220px;">
+            <input type="checkbox" id="n-publicar" checked />
+            <label for="n-publicar">Pode publicar notícias</label>
+          </div>
+          <div class="field" style="flex:2;">
+            <label>Restringir a editorias (nenhuma marcada = todas)</label>
+            <div class="editorias-chips" id="n-editorias-chips" style="max-width:none;"></div>
+          </div>
+        </div>
+        <div class="editor-actions">
+          <button type="submit" class="btn">Criar editor</button>
+          <span class="editor-save-msg" id="novo-editor-msg"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="editor-card">
+      <h2>Editores e administradores</h2>
+      <div style="overflow-x:auto;">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Papel</th>
+              <th>Publicar</th>
+              <th>Editorias permitidas</th>
+              <th>Ativo</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-usuarios">
+            <tr><td colspan="6">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

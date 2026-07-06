@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Busca — Cais</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-bar container">
+      <a href="index.html" class="logo">Ca<span>i</span>s</a>
+      <form class="search-box header-search-form" role="search">
+        <input type="search" placeholder="Buscar notícias..." aria-label="Buscar notícias" />
+      </form>
+      <div class="header-actions">
+        <a href="editor.html" class="icon-btn" title="Área da redação (login)">✍️</a>
+        <button type="button" class="icon-btn dark-toggle" title="Alternar modo escuro">🌙</button>
+        <button type="button" class="icon-btn mobile-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <ul class="container">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="busca.html?editoria=rio">Rio</a></li>
+        <li><a href="busca.html?editoria=baixada">Baixada Fluminense</a></li>
+        <li><a href="busca.html?editoria=regiao-dos-lagos">Região dos Lagos</a></li>
+        <li><a href="busca.html?editoria=brasil">Brasil</a></li>
+        <li><a href="busca.html?editoria=economia">Economia</a></li>
+        <li><a href="busca.html?editoria=tecnologia">Tecnologia</a></li>
+        <li><a href="busca.html?editoria=esportes">Esportes</a></li>
+        <li><a href="busca.html?editoria=cultura">Cultura</a></li>
+      </ul>
+    </nav>
+    <div class="mobile-menu">
+      <form class="search-box header-search-form" role="search">
+        <input type="search" placeholder="Buscar notícias..." aria-label="Buscar notícias" />
+      </form>
+      <ul>
+        <li><a href="busca.html?editoria=rio">Rio</a></li>
+        <li><a href="busca.html?editoria=baixada">Baixada Fluminense</a></li>
+        <li><a href="busca.html?editoria=regiao-dos-lagos">Região dos Lagos</a></li>
+        <li><a href="busca.html?editoria=brasil">Brasil</a></li>
+        <li><a href="busca.html?editoria=economia">Economia</a></li>
+        <li><a href="busca.html?editoria=tecnologia">Tecnologia</a></li>
+        <li><a href="busca.html?editoria=esportes">Esportes</a></li>
+        <li><a href="busca.html?editoria=cultura">Cultura</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 24px 0 48px;">
+    <div class="section-title"><h2>Buscar notícias</h2></div>
+    <form id="busca-form" class="busca-filtros">
+      <div class="campo">
+        <label for="f-q">Palavra-chave</label>
+        <input type="search" id="f-q" name="q" placeholder="Ex: chuva, dólar, futebol..." />
+      </div>
+      <div class="campo">
+        <label for="f-editoria">Editoria</label>
+        <select id="f-editoria" name="editoria"></select>
+      </div>
+      <div class="campo">
+        <label for="f-from">De</label>
+        <input type="date" id="f-from" name="from" />
+      </div>
+      <div class="campo">
+        <label for="f-to">Até</label>
+        <input type="date" id="f-to" name="to" />
+      </div>
+      <div class="campo">
+        <button type="submit" class="btn">Buscar</button>
+      </div>
+    </form>
+
+    <div class="busca-resultados" id="busca-resultados"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid container">
+      <div>
+        <h4>Editorias</h4>
+        <ul>
+          <li><a href="busca.html?editoria=rio">Rio</a></li>
+          <li><a href="busca.html?editoria=baixada">Baixada Fluminense</a></li>
+        <li><a href="busca.html?editoria=regiao-dos-lagos">Região dos Lagos</a></li>
+          <li><a href="busca.html?editoria=brasil">Brasil</a></li>
+          <li><a href="busca.html?editoria=economia">Economia</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Mais</h4>
+        <ul>
+          <li><a href="busca.html?editoria=tecnologia">Tecnologia</a></li>
+          <li><a href="busca.html?editoria=esportes">Esportes</a></li>
+          <li><a href="busca.html?editoria=cultura">Cultura</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Redes sociais</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">X / Twitter</a></li>
+          <li><a href="#">WhatsApp Canal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="#">Quem somos</a></li>
+          <li><a href="#">Fale com a redação</a></li>
+          <li><a href="#">Política de transparência</a></li>
+          <li><a href="editor.html">Painel de edição</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">Cais — jornalismo regional do Rio de Janeiro e da Baixada Fluminense. Conteúdo de demonstração.</div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Cais</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-bar container">
+      <a href="index.html" class="logo">Ca<span>i</span>s</a>
+      <span style="font-weight:700;color:var(--text-muted);font-size:0.9rem;">Acesso da redação</span>
+      <div class="header-actions">
+        <button type="button" class="icon-btn dark-toggle" title="Alternar modo escuro">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="login-wrap">
+    <div class="login-card">
+      <h1>Entrar</h1>
+      <p class="subtitulo">Acesso restrito a administradores e editores do Cais.</p>
+      <form class="login-form" id="login-form">
+        <div>
+          <label for="l-email">E-mail</label>
+          <input type="email" id="l-email" required autocomplete="username" />
+        </div>
+        <div>
+          <label for="l-senha">Senha</label>
+          <input type="password" id="l-senha" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+        <p class="form-msg" id="login-msg"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/login.js"></script>
+</body>
+</html>
